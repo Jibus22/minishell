@@ -33,21 +33,22 @@ static int	check_fd_n_path(char *path, t_command *cmd, int *err)
 {
 	struct stat	fd_check;
 	struct stat	path_check;
+	int			ret;
 
-	stat(path, &path_check);
-	if (!(S_ISDIR(path_check.st_mode)))
+	ret = stat(path, &path_check);
+	if (!ret && !(S_ISDIR(path_check.st_mode)))
 	{
 		*err = ERRNO_CD;
 		return (1);
 	}
-	fstat(cmd->fd[1], &fd_check);
-	if (S_ISFIFO(fd_check.st_mode))
+	ret = fstat(cmd->fd[1], &fd_check);
+	if (!ret && S_ISFIFO(fd_check.st_mode))
 	{
 		*err = CD_FIFO;
 		return (1);
 	}
-	fstat(cmd->fd[0], &fd_check);
-	if (S_ISFIFO(fd_check.st_mode))
+	ret = fstat(cmd->fd[0], &fd_check);
+	if (!ret && S_ISFIFO(fd_check.st_mode))
 	{
 		*err = CD_FIFO;
 		return (1);
